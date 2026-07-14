@@ -44,6 +44,7 @@ func main() {
 		proxyURL := targetURL.ResolveReference(r.URL)
 		proxyRequest, err := http.NewRequest(r.Method, proxyURL.String(), r.Body)
 		if err != nil {
+			log.Printf("Error creating proxy request: %v", err)
 			http.Error(w, "Error creating proxy request", http.StatusInternalServerError)
 			return
 		}
@@ -53,6 +54,7 @@ func main() {
 		client := &http.Client{}
 		resp, err := client.Do(proxyRequest)
 		if err != nil {
+			log.Printf("Error executing proxy request: %v", err)
 			http.Error(w, "Error executing proxy request", http.StatusBadGateway)
 			return
 		}
