@@ -1,4 +1,4 @@
-FROM golang:1.20-alpine as builder
+FROM golang:1.26-alpine as builder
 MAINTAINER Tristan Horn <tristan+docker@ethereal.net>
 WORKDIR /app
 RUN apk add --no-cache upx
