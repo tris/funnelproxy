@@ -1,6 +1,7 @@
 package main
 
 import (
+	"crypto/tls"
 	"fmt"
 	"io"
 	"log"
@@ -14,10 +15,11 @@ import (
 
 func main() {
 	stateDir := flag.StringP("statedir", "d", "", "Directory for storing state")
+	insecure := flag.Bool("insecure", false, "Skip SSL certificate verification for the target URL")
 	flag.Parse()
 
 	if flag.NArg() != 2 {
-		log.Fatal("Usage: ./funnelproxy [-d|--statedir <dir>] <hostname> <target-url>")
+		log.Fatal("Usage: ./funnelproxy [-d|--statedir <dir>] [--insecure] <hostname> <target-url>")
 	}
 
 	targetURL, err := url.Parse(flag.Arg(1))
@@ -40,6 +42,13 @@ func main() {
 
 	fmt.Printf("Listening on https://%v\n", s.CertDomains()[0])
 
+	client := &http.Client{}
+	if *insecure {
+		client.Transport = &http.Transport{
+			TLSClientConfig: &tls.Config{InsecureSkipVerify: true},
+		}
+	}
+
 	err = http.Serve(ln, http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		proxyURL := targetURL.ResolveReference(r.URL)
 		proxyRequest, err := http.NewRequest(r.Method, proxyURL.String(), r.Body)
@@ -51,7 +60,6 @@ func main() {
 
 		proxyRequest.Header = r.Header
 
-		client := &http.Client{}
 		resp, err := client.Do(proxyRequest)
 		if err != nil {
 			log.Printf("Error executing proxy request: %v", err)

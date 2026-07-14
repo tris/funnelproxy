@@ -33,6 +33,13 @@ TS_AUTHKEY=tskey-auth-xxx funnelproxy fun http://target-url
 This will create `https://fun.<tailnet>.ts.net`, forwarding all requests to
 `http://target-url`.
 
+If the target uses HTTPS with a self-signed or otherwise invalid certificate,
+pass `--insecure` to skip certificate verification:
+
+```bash
+TS_AUTHKEY=tskey-auth-xxx funnelproxy --insecure fun https://target-url
+```
+
 ### Docker
 
 ```bash
