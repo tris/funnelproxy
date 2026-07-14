@@ -54,8 +54,6 @@ TS_AUTHKEY=tskey-auth-xxx docker run --rm \
 ### Docker Compose
 
 ```yaml
-version: '3'
-
 volumes:
   fp_fun: {}
 
