@@ -34,8 +34,13 @@ builds:
     goarch: arm64
   - goarch: arm64
     goarm: 6
-  hooks:
-    post: upx --lzma {{ .Path }}
+
+upx:
+- enabled: true
+  goos:
+  - linux
+  - windows
+  lzma: true
 
 archives:
 - format: tar.gz
